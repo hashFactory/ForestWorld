@@ -40,7 +40,7 @@ public class SpriteDemo extends JPanel {
 
 		frame = new JFrame("World of Sprite");
 		frame.add(this);
-		frame.setSize(300,300);
+		frame.setSize(1000,1000);
 		frame.setVisible(true);
 		
 		myWorld = new int[8][8];
