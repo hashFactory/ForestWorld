@@ -38,7 +38,7 @@ public class SpriteDemo extends JPanel {
 			System.exit(-1);
 		}
 
-		frame = new JFrame("World of Sprite");
+		frame = new JFrame("ForestWorld!");
 		frame.add(this);
 		frame.setSize(1000,1000);
 		frame.setVisible(true);
