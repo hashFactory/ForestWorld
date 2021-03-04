@@ -3,11 +3,9 @@
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.image.ImageObserver;
 import java.io.File;
 
 import javax.imageio.ImageIO;
-import javax.swing.JApplet;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -53,6 +51,8 @@ public class Sprites extends JPanel {
         frame.add(this);
         frame.setSize(1000,1000); //agrandi la fenêtre d'affichage
         frame.setVisible(true);
+
+        TextureManager textureManager = new TextureManager("./images/");
 
         myWorld = new int[50][50];
 
