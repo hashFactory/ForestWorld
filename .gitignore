@@ -20,4 +20,6 @@
 *.zip
 *.tar.gz
 *.rar
+
 /scrum/~$sprint_1.xlsx
+/out/**
