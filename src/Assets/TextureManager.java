@@ -6,11 +6,13 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TextureManager {
     // peut etre rendre public plus tard
     private HashMap<String, Texture> textures;
+    //private ArrayList<Texture> textures;
     //private BufferedImage defaultTexture;
 
     // constructeur vide au cas où on veux initialiser avant qu'on sache où chercher
@@ -54,7 +56,6 @@ public class TextureManager {
             Output.errorln(e.getMessage());
             System.exit(1);
         }
-
     }
 
     // récupérer texture selon nom
@@ -64,6 +65,30 @@ public class TextureManager {
             System.exit(1);
         }
         return textures.get(name);
+
+        //chercher parmi les textures
+        /*for (Texture t: textures)
+            if (t.name.equals(name))
+                return t;
+
+        // si on ne la trouve pas
+        Output.warnln("Could not find texture \"" + name + "\"");
+
+        // on en donne une par défaut
+        if (textures.size() > 0) {
+            Output.warnln("defaulting to texture[0]");
+            return textures.get(0);
+        }
+
+        // si on en a aucune, erreur
+        Output.errorln("Could not default to textures[0] since TextureManager is empty.");
+        System.exit(1);
+        return null;*/
+    }
+
+    public BufferedImage get(int index) {
+        //if ()
+        return null;
     }
 
     // récupérer l'image selon nom

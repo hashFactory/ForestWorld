@@ -8,6 +8,8 @@ public class Texture {
     public int id;
     public String name;
     public BufferedImage image;
+    public int width;
+    public int height;
 
     public Texture(String name) {
         //this.id = id;
@@ -18,6 +20,8 @@ public class Texture {
         //this.id = id;
         this.name = name;
         this.image = image;
+        this.width = image.getWidth();
+        this.height = image.getHeight();
     }
 
     public BufferedImage getImage() {

@@ -1,20 +1,22 @@
-
 import Assets.TextureManager;
+import Engine.TickHandler;
+import Misc.Output;
 import World.World;
+import Engine.RenderEngine;
 
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+import javax.swing.*;
+import java.awt.*;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-
-public class ForestWorld extends JPanel {
-
+public class ForestWorld extends JPanel implements Runnable {
     private JFrame frame;
     private TextureManager tm;
+    private RenderEngine r;
 
     private int spriteLength = 32;
     private World w;
+    private int reqFPS = 60;
+    private double mspfs = (1000.0 / (double)reqFPS);
+    //private TickHandler th;
 
     //private int[][] myWorld;
 
@@ -28,56 +30,49 @@ public class ForestWorld extends JPanel {
             System.exit(-1);
         }
 
+        this.r = new RenderEngine(1600, 1600);
+
+        JFrame.setDefaultLookAndFeelDecorated(true);
         frame = new JFrame("World of Sprite");
+
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(this);
         frame.setSize(800,800); //agrandi la fenêtre d'affichage
         frame.setVisible(true);
 
-        w = new World(50, 50);
+        this.w = new World(50, 50);
+        //th = new TickHandler(60);
     }
 
     public void paint(Graphics g) {
-        Graphics2D g2 = (Graphics2D)g;
+        g.drawImage(this.r.newImage(this.w, this.tm, this.frame), 0, 0, 800, 800, this);
+        //this.r.paint(g, this.w, this.tm, this.frame);
+    }
 
-        //Création d'un volcan (aucune erruption)
-        for ( int i = 10 ; i < 11 ; i++ ) {
-            for ( int j = 10; j < w.myWorld[i][11]; j++ ){
-                g2.drawImage(tm.getImage("Volcan"),spriteLength*i,spriteLength*j,spriteLength,spriteLength, frame);
+    @Override
+    public void run()
+    {
+        Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+
+        long timeAtLastTick = System.currentTimeMillis();
+        long timeSinceLastTick = System.currentTimeMillis();
+        while (true)
+        {
+            repaint();
+            timeSinceLastTick = System.currentTimeMillis()-timeAtLastTick;
+
+            try {
+                Thread.sleep((long)(this.mspfs-timeSinceLastTick));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
+
+            double FPS = 1000.0 / (System.currentTimeMillis()-timeAtLastTick);
+            Output.infoln("Render - " + FPS + " , " + timeSinceLastTick);
+
+            timeAtLastTick = System.currentTimeMillis();
         }
 
-        // Création de la terre et de la roche
-
-        //Création de verdure (arbres,herbes)
-        /* Disperser les arbres au hasard grâce à un maths.random */
-        for ( int i = 0 ; i < w.myWorld.length ; i++ ) {
-            for ( int j = 0 ; j < w.myWorld[0].length ; j++ ) {
-                if ( w.myWorld[i][j] == 2 ) {
-                    g2.drawImage(tm.getImage("Tree"),spriteLength*i,spriteLength*j,spriteLength,spriteLength, frame);
-                } else {
-                    g2.drawImage(tm.getImage("Grass"),spriteLength*i,spriteLength*j,spriteLength,spriteLength, frame);
-                }
-            }
-        }
-
-        // Création d'un ciel bleu avec nuage (sans pluie)
-        /* La position du ciel et des nuages est fixe, l'image doit cependant changer durant la pluie */
-        for ( int i = 0 ; i < w.myWorld.length ; i++ ) {
-            for ( int j = 1 ; j < 3 ; j++ ) {
-                g2.drawImage(tm.getImage("Sky"),spriteLength*i,spriteLength*j,spriteLength,spriteLength, frame);
-            }
-            for ( int j = 0 ; j < 1 ; j++ ) {
-                g2.drawImage(tm.getImage("Cloud"),spriteLength*i,spriteLength*j,spriteLength,spriteLength, frame);
-            }
-        }
-
-
-        //Création de l'étang
-        for ( int i = 9; i < (w.myWorld.length/2) ; i++ ) {
-            for ( int j = 10 ; j < 14 ; j++ ) {
-                g2.drawImage(tm.getImage("Water"),spriteLength*i,spriteLength*j,spriteLength,spriteLength, frame);
-            }
-        }
     }
 
     /* Création de rives pour entourer l'étang si possible ??? */
