@@ -1,23 +1,24 @@
 
+import Assets.TextureManager;
+import World.World;
+
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
-import java.io.File;
 
-import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-public class Sprites extends JPanel {
+public class ForestWorld extends JPanel {
 
     private JFrame frame;
     private TextureManager tm;
 
     private int spriteLength = 32;
+    private World w;
 
-    private int[][] myWorld;
+    //private int[][] myWorld;
 
-    public Sprites() {
+    public ForestWorld() {
         // précharger les textures pour le jeu
         try {
             tm = new TextureManager("res/images/");
@@ -32,11 +33,7 @@ public class Sprites extends JPanel {
         frame.setSize(800,800); //agrandi la fenêtre d'affichage
         frame.setVisible(true);
 
-        myWorld = new int[50][50];
-
-        for ( int i = 0 ; i != 50 ; i++ )
-            for ( int j = 0 ; j != 50 ; j++ )
-                myWorld[i][j] = (int)(Math.random()*3.0);
+        w = new World(50, 50);
     }
 
     public void paint(Graphics g) {
@@ -44,7 +41,7 @@ public class Sprites extends JPanel {
 
         //Création d'un volcan (aucune erruption)
         for ( int i = 10 ; i < 11 ; i++ ) {
-            for ( int j = 10; j < myWorld[i][11]; j++ ){
+            for ( int j = 10; j < w.myWorld[i][11]; j++ ){
                 g2.drawImage(tm.getImage("Volcan"),spriteLength*i,spriteLength*j,spriteLength,spriteLength, frame);
             }
         }
@@ -53,9 +50,9 @@ public class Sprites extends JPanel {
 
         //Création de verdure (arbres,herbes)
         /* Disperser les arbres au hasard grâce à un maths.random */
-        for ( int i = 0 ; i < myWorld.length ; i++ ) {
-            for ( int j = 0 ; j < myWorld[0].length ; j++ ) {
-                if ( myWorld[i][j] == 2 ) {
+        for ( int i = 0 ; i < w.myWorld.length ; i++ ) {
+            for ( int j = 0 ; j < w.myWorld[0].length ; j++ ) {
+                if ( w.myWorld[i][j] == 2 ) {
                     g2.drawImage(tm.getImage("Tree"),spriteLength*i,spriteLength*j,spriteLength,spriteLength, frame);
                 } else {
                     g2.drawImage(tm.getImage("Grass"),spriteLength*i,spriteLength*j,spriteLength,spriteLength, frame);
@@ -65,7 +62,7 @@ public class Sprites extends JPanel {
 
         // Création d'un ciel bleu avec nuage (sans pluie)
         /* La position du ciel et des nuages est fixe, l'image doit cependant changer durant la pluie */
-        for ( int i = 0 ; i < myWorld.length ; i++ ) {
+        for ( int i = 0 ; i < w.myWorld.length ; i++ ) {
             for ( int j = 1 ; j < 3 ; j++ ) {
                 g2.drawImage(tm.getImage("Sky"),spriteLength*i,spriteLength*j,spriteLength,spriteLength, frame);
             }
@@ -76,7 +73,7 @@ public class Sprites extends JPanel {
 
 
         //Création de l'étang
-        for ( int i = 9; i < (myWorld.length/2) ; i++ ) {
+        for ( int i = 9; i < (w.myWorld.length/2) ; i++ ) {
             for ( int j = 10 ; j < 14 ; j++ ) {
                 g2.drawImage(tm.getImage("Water"),spriteLength*i,spriteLength*j,spriteLength,spriteLength, frame);
             }
@@ -109,6 +106,6 @@ public class Sprites extends JPanel {
 
 
     public static void main(String[] args) {
-        new Sprites();
+        new ForestWorld();
     }
 }

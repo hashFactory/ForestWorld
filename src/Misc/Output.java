@@ -1,3 +1,4 @@
+package Misc;
 
 public class Output {
     // permet de donner des messages plus facilement lisible
