@@ -15,4 +15,8 @@ public class WorldSaver {
 
         }*/
     }
+
+    public static boolean save(World w, String filename) {
+        return true;
+    }
 }
