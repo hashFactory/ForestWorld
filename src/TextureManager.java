@@ -1,6 +1,7 @@
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.net.URL;
 import java.util.HashMap;
 
 public class TextureManager {
@@ -15,13 +16,20 @@ public class TextureManager {
     // parcourir répertoire et ajouter toutes les textures
     public TextureManager(String dir) {
         this();
-        File[] textureFiles;
+        ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        URL url = loader.getResource("images");
+        String path = url.getPath();
+
+        // juste pour confirmer, afficher les textures
+        File [] files = new File(path).listFiles();
+        for (File f: files)
+            System.out.println(f.getAbsolutePath());
 
         // chercher dans le répertoire
         try {
             File textureDirectory = new File(dir);
-            Output.infoln("Loading textures from \"" + textureDirectory.getAbsolutePath() + "\n");
-            textureFiles = textureDirectory.listFiles();
+            Output.infoln("Loading textures from \"" + textureDirectory.getAbsolutePath() + "\"\n");
+            var textureFiles = textureDirectory.listFiles();
 
             // pour chaque fichier, essayer de créer une nouvelle texture pour
             assert textureFiles != null;
@@ -43,7 +51,6 @@ public class TextureManager {
             System.exit(1);
         }
 
-
     }
 
     // récupérer texture selon nom
@@ -57,11 +64,13 @@ public class TextureManager {
 
     // récupérer l'image selon nom
     public BufferedImage getImage(String name) {
-        if (!textures.containsKey(name)) {
-            Output.warnln("Could not find texture \"" + name + "\", defaulting.");
-            System.exit(1);
-        }
-        return textures.get(name).image;
+        return getTexture(name).image;
     }
+
+    /*
+    // récupérer l'image selon index
+    public BufferedImage getImage(int id) {
+
+    }*/
 
 }

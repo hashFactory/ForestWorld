@@ -1,5 +1,4 @@
 
-
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -11,48 +10,27 @@ import javax.swing.JPanel;
 
 public class Sprites extends JPanel {
 
-
     private JFrame frame;
-
-    private Image grassSprite;
-    private Image treeSprite;
-    private Image skySprite;
-    private Image cloudSprite;
-    private Image volcanSprite;
-    private Image waterSprite;
-
+    private TextureManager tm;
 
     private int spriteLength = 32;
 
     private int[][] myWorld;
 
-    public Sprites()
-    {
-        try
-        {
-            grassSprite = ImageIO.read(new File("Grass.png"));
-            treeSprite = ImageIO.read(new File ("tree.png"));
-            skySprite = ImageIO.read (new File ("Sky.png"));
-            cloudSprite = ImageIO.read (new File ("Cloud.png"));
-            volcanSprite = ImageIO.read (new File ("Volcan.png"));
-            waterSprite = ImageIO.read (new File ("Water.png"));
-            //BurningTree1Sprite = ImageIO.read(new File("BurningTree1.png"));
-            //BurningTree2Sprite = ImageIO.read(new File("BurningTree2.png"));
-            //BurningTree3Sprite = ImageIO.read(new File("BurningTree3.png"));
-            // DeadTree1Sprite = ImageIO.read(new File("DeadTree1Sprite.png"));
+    public Sprites() {
+        // précharger les textures pour le jeu
+        try {
+            tm = new TextureManager("res/images/");
         }
-        catch(Exception e)
-        {
+        catch(Exception e) {
             e.printStackTrace();
             System.exit(-1);
         }
 
         frame = new JFrame("World of Sprite");
         frame.add(this);
-        frame.setSize(1000,1000); //agrandi la fenêtre d'affichage
+        frame.setSize(800,800); //agrandi la fenêtre d'affichage
         frame.setVisible(true);
-
-        TextureManager textureManager = new TextureManager("./images/");
 
         myWorld = new int[50][50];
 
@@ -61,14 +39,13 @@ public class Sprites extends JPanel {
                 myWorld[i][j] = (int)(Math.random()*3.0);
     }
 
-    public void paint(Graphics g)
-    {
+    public void paint(Graphics g) {
         Graphics2D g2 = (Graphics2D)g;
 
         //Création d'un volcan (aucune erruption)
-        for ( int i = 10 ; i < 11 ; i++ ){
+        for ( int i = 10 ; i < 11 ; i++ ) {
             for ( int j = 10; j < myWorld[i][11]; j++ ){
-                g2.drawImage(volcanSprite,spriteLength*i,spriteLength*j,spriteLength,spriteLength, frame);
+                g2.drawImage(tm.getImage("Volcan"),spriteLength*i,spriteLength*j,spriteLength,spriteLength, frame);
             }
         }
 
@@ -76,36 +53,32 @@ public class Sprites extends JPanel {
 
         //Création de verdure (arbres,herbes)
         /* Disperser les arbres au hasard grâce à un maths.random */
-        for ( int i = 0 ; i < myWorld.length ; i++ )
-        {
-            for ( int j = 0 ; j < myWorld[0].length ; j++ )
-            {
-                if ( myWorld[i][j] == 2 ){
-                    g2.drawImage(treeSprite,spriteLength*i,spriteLength*j,spriteLength,spriteLength, frame);
+        for ( int i = 0 ; i < myWorld.length ; i++ ) {
+            for ( int j = 0 ; j < myWorld[0].length ; j++ ) {
+                if ( myWorld[i][j] == 2 ) {
+                    g2.drawImage(tm.getImage("Tree"),spriteLength*i,spriteLength*j,spriteLength,spriteLength, frame);
+                } else {
+                    g2.drawImage(tm.getImage("Grass"),spriteLength*i,spriteLength*j,spriteLength,spriteLength, frame);
                 }
-                else {
-                    g2.drawImage(grassSprite,spriteLength*i,spriteLength*j,spriteLength,spriteLength, frame);
-                }
-
             }
         }
 
         // Création d'un ciel bleu avec nuage (sans pluie)
         /* La position du ciel et des nuages est fixe, l'image doit cependant changer durant la pluie */
-        for ( int i = 0 ; i < myWorld.length ; i++ ){
-            for ( int j = 1 ; j < 3 ; j++ ){
-                g2.drawImage(skySprite,spriteLength*i,spriteLength*j,spriteLength,spriteLength, frame);
+        for ( int i = 0 ; i < myWorld.length ; i++ ) {
+            for ( int j = 1 ; j < 3 ; j++ ) {
+                g2.drawImage(tm.getImage("Sky"),spriteLength*i,spriteLength*j,spriteLength,spriteLength, frame);
             }
             for ( int j = 0 ; j < 1 ; j++ ) {
-                g2.drawImage(cloudSprite,spriteLength*i,spriteLength*j,spriteLength,spriteLength, frame);
+                g2.drawImage(tm.getImage("Cloud"),spriteLength*i,spriteLength*j,spriteLength,spriteLength, frame);
             }
         }
 
 
         //Création de l'étang
-        for ( int i = 9; i < (myWorld.length/2) ; i++ ){
-            for ( int j = 10 ; j < 14 ; j++ ){
-                g2.drawImage(waterSprite,spriteLength*i,spriteLength*j,spriteLength,spriteLength, frame);
+        for ( int i = 9; i < (myWorld.length/2) ; i++ ) {
+            for ( int j = 10 ; j < 14 ; j++ ) {
+                g2.drawImage(tm.getImage("Water"),spriteLength*i,spriteLength*j,spriteLength,spriteLength, frame);
             }
         }
     }
