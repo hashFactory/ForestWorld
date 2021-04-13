@@ -7,17 +7,14 @@ public class ForestWorld {
     private Engine en;
 
     public ForestWorld() {
-        frame = new JFrame("World of Sprite") {
-            //@Override
+        frame = new JFrame("World of Sprite");
 
-        };
-
-        this.en = new Engine(60);
+        this.en = new Engine(20);
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800,800); //agrandi la fenêtre d'affichage
         frame.getContentPane().add(this.en.jp);
-        frame.pack();
+        //frame.pack();
 
         frame.setVisible(true);
 
