@@ -36,14 +36,16 @@ public class Engine extends JPanel implements Runnable {
             System.exit(-1);
         }
 
-        this.re = new RenderEngine(800, 800, 60, this);
+        // init des structures
+        this.w = new World(50, 50);
+        this.re = new RenderEngine(800, 800, 60, this, this.w);
         this.bi = new BufferedImage(this.re.width, this.re.height, BufferedImage.TYPE_3BYTE_BGR);
 
+        // temps par tick
         this.tps = tps;
         this.mspt = (int)(1000.0 / this.tps);
 
         this.jp = this;
-        this.w = new World(50, 50);
     }
 
     public void start() {
@@ -58,7 +60,10 @@ public class Engine extends JPanel implements Runnable {
     public void paintComponent(Graphics g) {
         //super.paintComponent(g);
 
-        g.drawImage(this.re.newImage(this.w, this.tm, this.bi, this), 0, 0, 800, 800, this);
+        Graphics2D g2 = (Graphics2D)g;
+        this.re.draw(g2, this.w, this.tm, this);
+
+        //g.drawImage(this.re.newImage(this.w, this.tm, this.bi, this), 0, 0, 800, 800, this);
         g.setColor(Color.BLACK);
         g.fillRect(10, 10, 300, 30);
         g.setColor(Color.WHITE);

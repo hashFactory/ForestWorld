@@ -21,11 +21,16 @@ public class RenderEngine implements Runnable {
     public int reqFPS = 60;
     public long mspf = 1000 / this.reqFPS;
 
+    public double xcenter = 0;
+    public double ycenter = 0;
+    public double zoom = 1;
+
     public JPanel jp;
+    public World w;
 
     //private TextureManager tm;
 
-    public RenderEngine(int width, int height, int reqFPS, JPanel jp) {
+    public RenderEngine(int width, int height, int reqFPS, JPanel jp, World w) {
         this.width = width;
         this.height = height;
 
@@ -33,26 +38,42 @@ public class RenderEngine implements Runnable {
         this.mspf = 1000 / this.reqFPS;
 
         this.frame = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
+        this.w = w;
+
+        this.xcenter = this.w.width / 2.0;
+        this.ycenter = this.w.height / 2.0;
 
         this.jp = jp;
     }
 
+    //private boolean isIn(int x, int y, )
+
+    public boolean draw(Graphics2D g2, World w, TextureManager tm, ImageObserver io) {
+        int[] textures = {"Volcan".hashCode(), "Tree".hashCode(), "Grass".hashCode(),
+            "Sky".hashCode(), "Cloud".hashCode(), "Water".hashCode()};
+
+        for ( int i = 0 ; i < w.myWorld.length ; i++ ) {
+            for ( int j = 0 ; j < w.myWorld[0].length ; j++ ) {
+                Texture tex = tm.get( textures[ w.myWorld[i][j] ] );
+                g2.drawImage(tex.image, tex.width * i / 2, tex.height * j / 2, tex.width / 2, tex.height / 2, io);
+            }
+        }
+
+        Output.infoln("Time since last frame: " + (System.currentTimeMillis() - this.timeAtLastFrame) + "ms");
+        this.timeAtLastFrame = System.currentTimeMillis();
+
+        return true;
+    }
+
+    @Deprecated
     public Image newImage(World w, TextureManager tm, BufferedImage bi, ImageObserver io) {
         Graphics2D g2 = (Graphics2D)bi.getGraphics();
         //g2.clearRect(0, 0, this.width, this.height);
 
-        int textures[] = {"Volcan".hashCode(), "Tree".hashCode(), "Grass".hashCode(),
+        int[] textures = {"Volcan".hashCode(), "Tree".hashCode(), "Grass".hashCode(),
                             "Sky".hashCode(), "Cloud".hashCode(), "Water".hashCode()};
 
-        //Création d'un volcan (aucune erruption)
-        /*for ( int i = 10 ; i < 11 ; i++ ) {
-            for ( int j = 10; j < 11; j++ ) {
-                g2.drawImage(volcan.image, volcan.width, volcan.height * j, volcan.width, volcan.height, io);
-            }
-        }*/
-
         // Création de la terre et de la roche
-
         //Création de verdure (arbres,herbes)
         /* Disperser les arbres au hasard grâce à un maths.random */
         for ( int i = 0 ; i < w.myWorld.length ; i++ ) {
@@ -80,7 +101,7 @@ public class RenderEngine implements Runnable {
             }
         }*/
 
-        //Output.infoln("Time since last frame: " + (System.currentTimeMillis() - this.timeAtLastFrame) + "ms");
+        Output.infoln("Time since last frame: " + (System.currentTimeMillis() - this.timeAtLastFrame) + "ms");
         this.timeAtLastFrame = System.currentTimeMillis();
         return bi;
     }
@@ -94,11 +115,13 @@ public class RenderEngine implements Runnable {
             jp.repaint();
 
             long timeSinceLastTick = System.currentTimeMillis() - this.timeAtLastTick;
+            Output.infoln("Time since last tick: " + timeSinceLastTick + "ms");
 
             try {
                 Thread.sleep(1 + this.mspf - timeSinceLastTick);
             } catch (InterruptedException e) {
                 e.printStackTrace();
+                System.exit(1);
             }
 
             timeAtLastTick = System.currentTimeMillis();
