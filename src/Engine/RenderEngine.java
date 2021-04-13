@@ -2,13 +2,16 @@ package Engine;
 
 import Assets.Texture;
 import Assets.TextureManager;
+import Misc.Output;
 import World.World;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.ImageObserver;
 
 public class RenderEngine {
+    long timeAtLastFrame = 0;
 
     private BufferedImage frame;
     public int width = 800;
@@ -23,9 +26,9 @@ public class RenderEngine {
         this.frame = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
     }
 
-    public Image newImage(World w, TextureManager tm, JFrame frame) {
-        Graphics2D g2 = (Graphics2D)this.frame.getGraphics();
-        g2.clearRect(0, 0, this.width, this.height);
+    public Image newImage(World w, TextureManager tm, BufferedImage bi, ImageObserver io) {
+        Graphics2D g2 = (Graphics2D)bi.getGraphics();
+        //g2.clearRect(0, 0, this.width, this.height);
 
         Texture volcan = tm.getTexture("Volcan");
         Texture tree = tm.getTexture("Tree");
@@ -37,7 +40,7 @@ public class RenderEngine {
         //Création d'un volcan (aucune erruption)
         for ( int i = 10 ; i < 11 ; i++ ) {
             for ( int j = 10; j < w.myWorld[i][11]; j++ ) {
-                g2.drawImage(volcan.image, volcan.width, volcan.height * j, volcan.width, volcan.height, frame);
+                g2.drawImage(volcan.image, volcan.width, volcan.height * j, volcan.width, volcan.height, io);
             }
         }
 
@@ -48,9 +51,9 @@ public class RenderEngine {
         for ( int i = 0 ; i < w.myWorld.length ; i++ ) {
             for ( int j = 0 ; j < w.myWorld[0].length ; j++ ) {
                 if ( w.myWorld[i][j] == 2 ) {
-                    g2.drawImage(tree.image, tree.width * i, tree.height * j, tree.width, tree.height, frame);
+                    g2.drawImage(tree.image, tree.width * i, tree.height * j, tree.width, tree.height, io);
                 } else {
-                    g2.drawImage(grass.image, grass.width * i, grass.height * j, grass.width, grass.height, frame);
+                    g2.drawImage(grass.image, grass.width * i, grass.height * j, grass.width, grass.height, io);
                 }
             }
         }
@@ -59,22 +62,23 @@ public class RenderEngine {
         /* La position du ciel et des nuages est fixe, l'image doit cependant changer durant la pluie */
         for ( int i = 0 ; i < w.myWorld.length ; i++ ) {
             for ( int j = 1 ; j < 3 ; j++ ) {
-                g2.drawImage(sky.image, sky.width * i, sky.height * j, sky.width, sky.height, frame);
+                g2.drawImage(sky.image, sky.width * i, sky.height * j, sky.width, sky.height, io);
             }
             for ( int j = 0 ; j < 1 ; j++ ) {
-                g2.drawImage(cloud.image, cloud.width * i, cloud.height * j, cloud.width, cloud.height, frame);
+                g2.drawImage(cloud.image, cloud.width * i, cloud.height * j, cloud.width, cloud.height, io);
             }
         }
-
 
         //Création de l'étang
         for ( int i = 9; i < (w.myWorld.length/2) ; i++ ) {
             for ( int j = 10 ; j < 14 ; j++ ) {
-                g2.drawImage(water.image, water.width * i, water.height * j, water.width, water.height, frame);
+                g2.drawImage(water.image, water.width * i, water.height * j, water.width, water.height, io);
             }
         }
 
-        return this.frame;
+        Output.infoln("Time since last frame: " + (System.currentTimeMillis() - this.timeAtLastFrame) + "ms");
+        this.timeAtLastFrame = System.currentTimeMillis();
+        return bi;
     }
 
 }

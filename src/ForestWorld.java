@@ -1,78 +1,27 @@
-import Assets.TextureManager;
-import Engine.TickHandler;
-import Misc.Output;
-import World.World;
-import Engine.RenderEngine;
+import Engine.Engine;
 
 import javax.swing.*;
-import java.awt.*;
 
-public class ForestWorld extends JPanel implements Runnable {
+public class ForestWorld {
     private JFrame frame;
-    private TextureManager tm;
-    private RenderEngine r;
-
-    private int spriteLength = 32;
-    private World w;
-    private int reqFPS = 60;
-    private double mspfs = (1000.0 / (double)reqFPS);
-    //private TickHandler th;
-
-    //private int[][] myWorld;
+    private Engine en;
 
     public ForestWorld() {
-        // précharger les textures pour le jeu
-        try {
-            tm = new TextureManager("res/images/");
-        }
-        catch(Exception e) {
-            e.printStackTrace();
-            System.exit(-1);
-        }
+        frame = new JFrame("World of Sprite") {
+            //@Override
 
-        this.r = new RenderEngine(1600, 1600);
+        };
 
-        JFrame.setDefaultLookAndFeelDecorated(true);
-        frame = new JFrame("World of Sprite");
+        this.en = new Engine(60);
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.add(this);
         frame.setSize(800,800); //agrandi la fenêtre d'affichage
+        frame.getContentPane().add(this.en.jp);
+        frame.pack();
+
         frame.setVisible(true);
 
-        this.w = new World(50, 50);
-        //th = new TickHandler(60);
-    }
-
-    public void paint(Graphics g) {
-        g.drawImage(this.r.newImage(this.w, this.tm, this.frame), 0, 0, 800, 800, this);
-        //this.r.paint(g, this.w, this.tm, this.frame);
-    }
-
-    @Override
-    public void run()
-    {
-        Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
-
-        long timeAtLastTick = System.currentTimeMillis();
-        long timeSinceLastTick = System.currentTimeMillis();
-        while (true)
-        {
-            repaint();
-            timeSinceLastTick = System.currentTimeMillis()-timeAtLastTick;
-
-            try {
-                Thread.sleep((long)(this.mspfs-timeSinceLastTick));
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            double FPS = 1000.0 / (System.currentTimeMillis()-timeAtLastTick);
-            Output.infoln("Render - " + FPS + " , " + timeSinceLastTick);
-
-            timeAtLastTick = System.currentTimeMillis();
-        }
-
+        this.en.start();
     }
 
     /* Création de rives pour entourer l'étang si possible ??? */
@@ -97,8 +46,6 @@ public class ForestWorld extends JPanel implements Runnable {
 		OU
 		_ Faire une règle disant que de la pluie tombe après ou avant chaque éruption volcanique.
 	*/
-
-
 
     public static void main(String[] args) {
         new ForestWorld();

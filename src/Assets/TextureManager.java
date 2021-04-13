@@ -12,7 +12,9 @@ import java.util.HashMap;
 public class TextureManager {
     // peut etre rendre public plus tard
     private HashMap<String, Texture> textures;
-    //private ArrayList<Texture> textures;
+    //private ArrayList<Integer> t;
+
+    //private ArrayList<Texture> t;
     //private BufferedImage defaultTexture;
 
     // constructeur vide au cas où on veux initialiser avant qu'on sache où chercher

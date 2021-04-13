@@ -22,4 +22,8 @@ public class World {
             for ( int j = 0 ; j != this.height ; j++ )
                 this.myWorld[i][j] = (int)(Math.random() * 3.0);
     }
+
+    public void update() {
+
+    }
 }
