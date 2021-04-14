@@ -12,7 +12,7 @@ public class ForestWorld {
         this.en = new Engine(20);
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800,800); //agrandi la fenêtre d'affichage
+        frame.setSize(600,600); //agrandi la fenêtre d'affichage
         frame.getContentPane().add(this.en.jp);
         //frame.pack();
 

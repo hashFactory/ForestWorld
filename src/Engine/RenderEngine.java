@@ -49,6 +49,9 @@ public class RenderEngine implements Runnable {
     }
 
     public boolean draw(Graphics2D g2, World w, TextureManager tm, ImageObserver io) {
+        g2.setColor(Color.BLACK);
+        g2.fillRect(0, 0, this.width, this.height);
+
         int[] textures = {"Volcan".hashCode(), "Tree".hashCode(), "Grass".hashCode(),
             "Sky".hashCode(), "Cloud".hashCode(), "Water".hashCode()};
 
@@ -112,6 +115,8 @@ public class RenderEngine implements Runnable {
         while (true)
         {
             //Output.debugln("Updated");
+            this.width = this.en.getWidth();
+            this.height = this.en.getHeight();
             en.repaint();
 
             long timeSinceLastFrame = System.currentTimeMillis() - this.timeAtLastTick;
