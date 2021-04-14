@@ -46,7 +46,21 @@ public class RenderEngine implements Runnable {
         this.jp = jp;
     }
 
-    //private boolean isIn(int x, int y, )
+    public void interpret() {
+        if (KeyboardHandler.keyStroke['w'])
+            this.ycenter -= 2;
+        if (KeyboardHandler.keyStroke['s'])
+            this.ycenter += 2;
+        if (KeyboardHandler.keyStroke['a'])
+            this.xcenter -= 2;
+        if (KeyboardHandler.keyStroke['d'])
+            this.xcenter += 2;
+        if (KeyboardHandler.keyStroke['q'])
+            this.zoom *= 0.98;
+        if (KeyboardHandler.keyStroke['e'])
+            this.zoom *= 1.02;
+        System.out.println(xcenter + "\t" + ycenter);
+    }
 
     public boolean draw(Graphics2D g2, World w, TextureManager tm, ImageObserver io) {
         int[] textures = {"Volcan".hashCode(), "Tree".hashCode(), "Grass".hashCode(),
@@ -55,7 +69,7 @@ public class RenderEngine implements Runnable {
         for ( int i = 0 ; i < w.myWorld.length ; i++ ) {
             for ( int j = 0 ; j < w.myWorld[0].length ; j++ ) {
                 Texture tex = tm.get( textures[ w.myWorld[i][j] ] );
-                g2.drawImage(tex.image, tex.width * i / 2, tex.height * j / 2, tex.width / 2, tex.height / 2, io);
+                g2.drawImage(tex.image, (tex.width * i / 2 - (int)xcenter) * (int)zoom, (tex.height * j / 2 - (int)ycenter) * (int)zoom, (tex.width / 2) * (int)zoom, (tex.height / 2) * (int)zoom, io);
             }
         }
 

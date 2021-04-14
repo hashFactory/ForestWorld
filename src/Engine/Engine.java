@@ -23,6 +23,8 @@ public class Engine extends JPanel implements Runnable {
     private TextureManager tm;
     private RenderEngine re;
     private World w;
+    public KeyboardHandler kh;
+
     public JPanel jp;
 
     private BufferedImage bi;
@@ -46,6 +48,7 @@ public class Engine extends JPanel implements Runnable {
         this.mspt = (int)(1000.0 / this.tps);
 
         this.jp = this;
+        this.kh = new KeyboardHandler(this, jp.getInputMap(), jp.getActionMap());
     }
 
     public void start() {
@@ -54,6 +57,7 @@ public class Engine extends JPanel implements Runnable {
         mainThread.start();
 
         this.renderThread = new Thread(this.re);
+        this.renderThread.start();
     }
 
     @Override
@@ -61,6 +65,7 @@ public class Engine extends JPanel implements Runnable {
         //super.paintComponent(g);
 
         Graphics2D g2 = (Graphics2D)g;
+        this.re.interpret();
         this.re.draw(g2, this.w, this.tm, this);
 
         //g.drawImage(this.re.newImage(this.w, this.tm, this.bi, this), 0, 0, 800, 800, this);
@@ -69,7 +74,7 @@ public class Engine extends JPanel implements Runnable {
         g.setColor(Color.WHITE);
         g.drawString("Frame number: " + this.frameNumber + "\nTick number: " + this.tick, 10, 30);
         this.frameNumber++;
-        this.updateUI();
+        //this.updateUI();
         //Output.infoln("Frame number: " + this.frameNumber);
         //this.r.paint(g, this.w, this.tm, this.frame);
     }
