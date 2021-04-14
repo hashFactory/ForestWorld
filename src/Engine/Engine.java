@@ -15,6 +15,7 @@ public class Engine extends JPanel implements Runnable {
 
     int frameNumber = 0;
     int tick = 0;
+    public boolean isPaused = false;
 
     long timeAtLastTick;
     Thread mainThread;
@@ -22,7 +23,7 @@ public class Engine extends JPanel implements Runnable {
 
     private TextureManager tm;
     private RenderEngine re;
-    private World w;
+    protected World w;
     public KeyboardHandler kh;
 
     public JPanel jp;
@@ -34,13 +35,14 @@ public class Engine extends JPanel implements Runnable {
         try {
             tm = new TextureManager("res/images/");
         } catch (Exception e) {
+            Output.errorln("");
             e.printStackTrace();
             System.exit(-1);
         }
 
         // init des structures
-        this.w = new World(50, 50);
-        this.re = new RenderEngine(800, 800, 60, this, this.w);
+        this.w = new World(40, 40);
+        this.re = new RenderEngine(600, 600, 70, this);
         this.bi = new BufferedImage(this.re.width, this.re.height, BufferedImage.TYPE_3BYTE_BGR);
 
         // temps par tick
@@ -65,11 +67,11 @@ public class Engine extends JPanel implements Runnable {
         //super.paintComponent(g);
 
         Graphics2D g2 = (Graphics2D)g;
-        this.re.interpret();
+        this.interpret();
         this.re.draw(g2, this.w, this.tm, this);
 
-        //g.drawImage(this.re.newImage(this.w, this.tm, this.bi, this), 0, 0, 800, 800, this);
-        g.setColor(Color.BLACK);
+        // écrire des stats par dessus
+        g.setColor(new Color(0, 0, 0, 50));
         g.fillRect(10, 10, 300, 30);
         g.setColor(Color.WHITE);
         g.drawString("Frame number: " + this.frameNumber + "\nTick number: " + this.tick, 10, 30);
@@ -79,17 +81,39 @@ public class Engine extends JPanel implements Runnable {
         //this.r.paint(g, this.w, this.tm, this.frame);
     }
 
+    public void interpret() {
+        if (KeyboardHandler.keyStroke['w'])
+            this.re.ycenter -= 2;
+        if (KeyboardHandler.keyStroke['s'])
+            this.re.ycenter += 2;
+        if (KeyboardHandler.keyStroke['a'])
+            this.re.xcenter -= 2;
+        if (KeyboardHandler.keyStroke['d'])
+            this.re.xcenter += 2;
+        if (KeyboardHandler.keyStroke['q'])
+            this.re.zoom *= 0.98;
+        if (KeyboardHandler.keyStroke['e'])
+            this.re.zoom *= 1.02;
+        if (KeyboardHandler.keyStroke[32]) {
+            System.out.println("Toggled");
+            this.isPaused = !this.isPaused;
+            KeyboardHandler.keyStroke[32] = false;
+        }
+    }
+
     @Override
     public void run() {
         this.timeAtLastTick = System.currentTimeMillis();
         while (true)
         {
             //execute();
-            this.w.update();
-            this.tick++;
+            if (!this.isPaused) {
+                this.w.update();
+                this.tick++;
+            }
 
             long timeSinceLastTick = System.currentTimeMillis() - this.timeAtLastTick;
-            //System.out.println("Updated world after " + timeSinceLastTick);
+            Output.infoln("Updated world after " + timeSinceLastTick);
 
             try {
                 Thread.sleep(1 + this.mspt - timeSinceLastTick);

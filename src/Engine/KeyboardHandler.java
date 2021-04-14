@@ -20,6 +20,7 @@ public class KeyboardHandler {
         inmap.put(KeyStroke.getKeyStroke("DOWN"), "DOWN");
         inmap.put(KeyStroke.getKeyStroke("LEFT"), "LEFT");
         inmap.put(KeyStroke.getKeyStroke("RIGHT"), "RIGHT");
+        inmap.put(KeyStroke.getKeyStroke("SPACE"), "SPACE");
 
         // SPACE to `
         for (int i = 32; i < 96; i++)
@@ -29,6 +30,8 @@ public class KeyboardHandler {
 
         amap.put("pressedAction", pressedAction);
         amap.put("releasedAction", releasedAction);
+
+        amap.put("SPACE", pressedAction);
 
         /*// ADD ELEMENTS TO MAP
         amap.put("UP", up);
