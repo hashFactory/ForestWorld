@@ -11,8 +11,10 @@ import java.util.HashMap;
 
 public class TextureManager {
     // peut etre rendre public plus tard
-    private HashMap<String, Texture> textures;
-    //private ArrayList<Texture> textures;
+    private HashMap<Integer, Texture> textures;
+    //private ArrayList<Integer> t;
+
+    //private ArrayList<Texture> t;
     //private BufferedImage defaultTexture;
 
     // constructeur vide au cas où on veux initialiser avant qu'on sache où chercher
@@ -47,7 +49,7 @@ public class TextureManager {
                     BufferedImage img = ImageIO.read(textureFile);
                     String basename = filename.replace(".png", "").replace(".jpg", "");
                     Texture newTexture = new Texture(basename, img);
-                    textures.put(basename, newTexture);
+                    textures.put(basename.hashCode(), newTexture);
                 }
             }
         } catch (Exception e) {
@@ -60,11 +62,11 @@ public class TextureManager {
 
     // récupérer texture selon nom
     public Texture getTexture(String name) {
-        if (!textures.containsKey(name)) {
+        if (!textures.containsKey(name.hashCode())) {
             Output.warnln("Could not find texture \"" + name + "\", defaulting.");
             System.exit(1);
         }
-        return textures.get(name);
+        return textures.get(name.hashCode());
 
         //chercher parmi les textures
         /*for (Texture t: textures)
@@ -86,9 +88,8 @@ public class TextureManager {
         return null;*/
     }
 
-    public BufferedImage get(int index) {
-        //if ()
-        return null;
+    public Texture get(int hashcode) {
+        return this.textures.get(hashcode);
     }
 
     // récupérer l'image selon nom

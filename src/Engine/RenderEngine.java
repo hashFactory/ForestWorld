@@ -2,79 +2,134 @@ package Engine;
 
 import Assets.Texture;
 import Assets.TextureManager;
+import Misc.Output;
 import World.World;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.ImageObserver;
 
-public class RenderEngine {
+public class RenderEngine implements Runnable {
+    long timeAtLastFrame = 0;
+    long[] lastFrameTimes = new long[100];
+    int lastFrameNumber = 0;
 
     private BufferedImage frame;
+    public long timeAtLastTick = 0;
     public int width = 800;
     public int height = 800;
 
+    public int reqFPS = 60;
+    public long mspf = 1000 / this.reqFPS;
+
+    public double xcenter = 0;
+    public double ycenter = 0;
+    public double zoom = 1;
+
+    public World w;
+    public Engine en;
+
     //private TextureManager tm;
 
-    public RenderEngine(int width, int height) {
+    public RenderEngine(int width, int height, int reqFPS, Engine en) {
         this.width = width;
         this.height = height;
 
+        this.reqFPS = reqFPS;
+        this.mspf = 1000 / this.reqFPS;
+
         this.frame = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
+        this.w = en.w;
+
+        this.xcenter = this.w.width / 2.0;
+        this.ycenter = this.w.height / 2.0;
+
+        this.en = en;
     }
 
-    public Image newImage(World w, TextureManager tm, JFrame frame) {
-        Graphics2D g2 = (Graphics2D)this.frame.getGraphics();
-        g2.clearRect(0, 0, this.width, this.height);
+    public boolean draw(Graphics2D g2, World w, TextureManager tm, ImageObserver io) {
+        g2.setColor(Color.BLACK);
+        g2.fillRect(0, 0, this.width, this.height);
 
-        Texture volcan = tm.getTexture("Volcan");
-        Texture tree = tm.getTexture("Tree");
-        Texture grass = tm.getTexture("Grass");
-        Texture sky = tm.getTexture("Sky");
-        Texture cloud = tm.getTexture("Cloud");
-        Texture water = tm.getTexture("Water");
+        int[] textures = {"Volcan".hashCode(), "Tree".hashCode(), "Grass".hashCode(),
+            "Sky".hashCode(), "Cloud".hashCode(), "Water".hashCode()};
 
-        //Création d'un volcan (aucune erruption)
-        for ( int i = 10 ; i < 11 ; i++ ) {
-            for ( int j = 10; j < w.myWorld[i][11]; j++ ) {
-                g2.drawImage(volcan.image, volcan.width, volcan.height * j, volcan.width, volcan.height, frame);
+        for ( int i = 0 ; i < w.myWorld.length ; i++ ) {
+            for ( int j = 0 ; j < w.myWorld[0].length ; j++ ) {
+                Texture tex = tm.get( textures[ w.myWorld[i][j] ] );
+                g2.drawImage(tex.image, (int)((tex.width * i / 4 - (int)xcenter) * zoom), (int)((tex.height * j / 4 - (int)ycenter) * zoom), (int)((tex.width / 4) * zoom) + 1, (int)((tex.height / 4) * zoom) + 1, io);
             }
         }
 
-        // Création de la terre et de la roche
+        Output.infoln("Time since last frame: " + (System.currentTimeMillis() - this.timeAtLastFrame) + "ms");
+        this.timeAtLastFrame = System.currentTimeMillis();
 
+        return true;
+    }
+
+    @Deprecated
+    public Image newImage(World w, TextureManager tm, BufferedImage bi, ImageObserver io) {
+        Graphics2D g2 = (Graphics2D)bi.getGraphics();
+        //g2.clearRect(0, 0, this.width, this.height);
+
+        int[] textures = {"Volcan".hashCode(), "Tree".hashCode(), "Grass".hashCode(),
+                            "Sky".hashCode(), "Cloud".hashCode(), "Water".hashCode()};
+
+        // Création de la terre et de la roche
         //Création de verdure (arbres,herbes)
         /* Disperser les arbres au hasard grâce à un maths.random */
         for ( int i = 0 ; i < w.myWorld.length ; i++ ) {
             for ( int j = 0 ; j < w.myWorld[0].length ; j++ ) {
-                if ( w.myWorld[i][j] == 2 ) {
-                    g2.drawImage(tree.image, tree.width * i, tree.height * j, tree.width, tree.height, frame);
-                } else {
-                    g2.drawImage(grass.image, grass.width * i, grass.height * j, grass.width, grass.height, frame);
-                }
+                Texture tex = tm.get( textures[ w.myWorld[i][j] ] );
+                g2.drawImage(tex.image, tex.width * i, tex.height * j, tex.width, tex.height, io);
             }
         }
 
         // Création d'un ciel bleu avec nuage (sans pluie)
         /* La position du ciel et des nuages est fixe, l'image doit cependant changer durant la pluie */
-        for ( int i = 0 ; i < w.myWorld.length ; i++ ) {
+        /*for ( int i = 0 ; i < w.myWorld.length ; i++ ) {
             for ( int j = 1 ; j < 3 ; j++ ) {
-                g2.drawImage(sky.image, sky.width * i, sky.height * j, sky.width, sky.height, frame);
+                g2.drawImage(sky.image, sky.width * i, sky.height * j, sky.width, sky.height, io);
             }
             for ( int j = 0 ; j < 1 ; j++ ) {
-                g2.drawImage(cloud.image, cloud.width * i, cloud.height * j, cloud.width, cloud.height, frame);
+                g2.drawImage(cloud.image, cloud.width * i, cloud.height * j, cloud.width, cloud.height, io);
             }
-        }
-
+        }*/
 
         //Création de l'étang
-        for ( int i = 9; i < (w.myWorld.length/2) ; i++ ) {
+        /*for ( int i = 9; i < (w.myWorld.length/2) ; i++ ) {
             for ( int j = 10 ; j < 14 ; j++ ) {
-                g2.drawImage(water.image, water.width * i, water.height * j, water.width, water.height, frame);
+                g2.drawImage(water.image, water.width * i, water.height * j, water.width, water.height, io);
             }
-        }
+        }*/
 
-        return this.frame;
+        Output.infoln("Time since last frame: " + (System.currentTimeMillis() - this.timeAtLastFrame) + "ms");
+        this.timeAtLastFrame = System.currentTimeMillis();
+        return bi;
     }
 
+    @Override
+    public void run() {
+        this.timeAtLastTick = System.currentTimeMillis();
+        while (true)
+        {
+            //Output.debugln("Updated");
+            this.width = this.en.getWidth();
+            this.height = this.en.getHeight();
+            en.repaint();
+
+            long timeSinceLastFrame = System.currentTimeMillis() - this.timeAtLastTick;
+            //Output.infoln("Time since last frame: " + timeSinceLastTick + "ms");
+
+            try {
+                Thread.sleep( this.mspf - timeSinceLastFrame);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                System.exit(1);
+            }
+
+            this.timeAtLastTick = System.currentTimeMillis();
+        }
+    }
 }
