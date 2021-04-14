@@ -12,6 +12,8 @@ import java.awt.image.ImageObserver;
 
 public class RenderEngine implements Runnable {
     long timeAtLastFrame = 0;
+    long[] lastFrameTimes = new long[100];
+    int lastFrameNumber = 0;
 
     private BufferedImage frame;
     public long timeAtLastTick = 0;
@@ -25,12 +27,12 @@ public class RenderEngine implements Runnable {
     public double ycenter = 0;
     public double zoom = 1;
 
-    public JPanel jp;
     public World w;
+    public Engine en;
 
     //private TextureManager tm;
 
-    public RenderEngine(int width, int height, int reqFPS, JPanel jp, World w) {
+    public RenderEngine(int width, int height, int reqFPS, Engine en) {
         this.width = width;
         this.height = height;
 
@@ -38,28 +40,12 @@ public class RenderEngine implements Runnable {
         this.mspf = 1000 / this.reqFPS;
 
         this.frame = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
-        this.w = w;
+        this.w = en.w;
 
         this.xcenter = this.w.width / 2.0;
         this.ycenter = this.w.height / 2.0;
 
-        this.jp = jp;
-    }
-
-    public void interpret() {
-        if (KeyboardHandler.keyStroke['w'])
-            this.ycenter -= 2;
-        if (KeyboardHandler.keyStroke['s'])
-            this.ycenter += 2;
-        if (KeyboardHandler.keyStroke['a'])
-            this.xcenter -= 2;
-        if (KeyboardHandler.keyStroke['d'])
-            this.xcenter += 2;
-        if (KeyboardHandler.keyStroke['q'])
-            this.zoom *= 0.98;
-        if (KeyboardHandler.keyStroke['e'])
-            this.zoom *= 1.02;
-        System.out.println(xcenter + "\t" + ycenter);
+        this.en = en;
     }
 
     public boolean draw(Graphics2D g2, World w, TextureManager tm, ImageObserver io) {
@@ -69,7 +55,7 @@ public class RenderEngine implements Runnable {
         for ( int i = 0 ; i < w.myWorld.length ; i++ ) {
             for ( int j = 0 ; j < w.myWorld[0].length ; j++ ) {
                 Texture tex = tm.get( textures[ w.myWorld[i][j] ] );
-                g2.drawImage(tex.image, (tex.width * i / 2 - (int)xcenter) * (int)zoom, (tex.height * j / 2 - (int)ycenter) * (int)zoom, (tex.width / 2) * (int)zoom, (tex.height / 2) * (int)zoom, io);
+                g2.drawImage(tex.image, (int)((tex.width * i / 4 - (int)xcenter) * zoom), (int)((tex.height * j / 4 - (int)ycenter) * zoom), (int)((tex.width / 4) * zoom) + 1, (int)((tex.height / 4) * zoom) + 1, io);
             }
         }
 
@@ -125,20 +111,20 @@ public class RenderEngine implements Runnable {
         this.timeAtLastTick = System.currentTimeMillis();
         while (true)
         {
-            //System.out.println("Updated");
-            jp.repaint();
+            //Output.debugln("Updated");
+            en.repaint();
 
-            long timeSinceLastTick = System.currentTimeMillis() - this.timeAtLastTick;
-            Output.infoln("Time since last tick: " + timeSinceLastTick + "ms");
+            long timeSinceLastFrame = System.currentTimeMillis() - this.timeAtLastTick;
+            //Output.infoln("Time since last frame: " + timeSinceLastTick + "ms");
 
             try {
-                Thread.sleep(1 + this.mspf - timeSinceLastTick);
+                Thread.sleep( this.mspf - timeSinceLastFrame);
             } catch (InterruptedException e) {
                 e.printStackTrace();
                 System.exit(1);
             }
 
-            timeAtLastTick = System.currentTimeMillis();
+            this.timeAtLastTick = System.currentTimeMillis();
         }
     }
 }
