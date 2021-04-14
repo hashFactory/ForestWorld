@@ -16,6 +16,7 @@ public class Engine extends JPanel implements Runnable {
     int frameNumber = 0;
     int tick = 0;
     public boolean isPaused = false;
+    public boolean showStats = true;
 
     long timeAtLastTick;
     Thread mainThread;
@@ -34,6 +35,7 @@ public class Engine extends JPanel implements Runnable {
         // précharger les textures pour le jeu
         try {
             tm = new TextureManager("res/images/");
+            tm.updateTextures(1.0);
         } catch (Exception e) {
             Output.errorln("");
             e.printStackTrace();
@@ -71,10 +73,12 @@ public class Engine extends JPanel implements Runnable {
         this.re.draw(g2, this.w, this.tm, this);
 
         // écrire des stats par dessus
-        g.setColor(new Color(0, 0, 0, 50));
-        g.fillRect(10, 10, 300, 30);
-        g.setColor(Color.WHITE);
-        g.drawString("Frame number: " + this.frameNumber + "\nTick number: " + this.tick, 10, 30);
+        if (this.showStats) {
+            g.setColor(new Color(0, 0, 0, 50));
+            g.fillRect(10, 10, 300, 30);
+            g.setColor(Color.WHITE);
+            g.drawString("Frame number: " + this.frameNumber + "\nTick number: " + this.tick, 10, 30);
+        }
         this.frameNumber++;
         //this.updateUI();
         //Output.infoln("Frame number: " + this.frameNumber);
@@ -83,21 +87,33 @@ public class Engine extends JPanel implements Runnable {
 
     public void interpret() {
         if (KeyboardHandler.keyStroke['w'])
-            this.re.ycenter -= 2;
+            this.re.ycenter -= 4 * (1.0 / this.re.zoom);
         if (KeyboardHandler.keyStroke['s'])
-            this.re.ycenter += 2;
+            this.re.ycenter += 4 * (1.0 / this.re.zoom);
         if (KeyboardHandler.keyStroke['a'])
-            this.re.xcenter -= 2;
+            this.re.xcenter -= 4 * (1.0 / this.re.zoom);
         if (KeyboardHandler.keyStroke['d'])
-            this.re.xcenter += 2;
-        if (KeyboardHandler.keyStroke['q'])
+            this.re.xcenter += 4 * (1.0 / this.re.zoom);
+        if (KeyboardHandler.keyStroke['q']) {
             this.re.zoom *= 0.98;
-        if (KeyboardHandler.keyStroke['e'])
+            this.tm.updateTextures(this.re.zoom);
+        }
+        if (KeyboardHandler.keyStroke['e']) {
             this.re.zoom *= 1.02;
+            this.tm.updateTextures(this.re.zoom);
+        }
         if (KeyboardHandler.keyStroke[32]) {
-            System.out.println("Toggled");
+            Output.infoln("Toggled pause");
             this.isPaused = !this.isPaused;
             KeyboardHandler.keyStroke[32] = false;
+        }
+        if (KeyboardHandler.keyStroke['1']) {
+            Output.infoln("Toggled stats");
+            this.showStats = !this.showStats;
+            KeyboardHandler.keyStroke['1'] = false;
+        }
+        if (KeyboardHandler.keyStroke['r']) {
+            this.w.generateWorld();
         }
     }
 

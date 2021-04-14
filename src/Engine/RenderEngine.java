@@ -41,11 +41,10 @@ public class RenderEngine implements Runnable {
 
         this.frame = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
         this.w = en.w;
-
-        this.xcenter = this.w.width / 2.0;
-        this.ycenter = this.w.height / 2.0;
-
         this.en = en;
+
+        this.xcenter = this.en.getWidth() / 2.0;
+        this.ycenter = this.en.getHeight() / 2.0;
     }
 
     public boolean draw(Graphics2D g2, World w, TextureManager tm, ImageObserver io) {
@@ -58,7 +57,10 @@ public class RenderEngine implements Runnable {
         for ( int i = 0 ; i < w.myWorld.length ; i++ ) {
             for ( int j = 0 ; j < w.myWorld[0].length ; j++ ) {
                 Texture tex = tm.get( textures[ w.myWorld[i][j] ] );
-                g2.drawImage(tex.image, (int)((tex.width * i / 4 - (int)xcenter) * zoom), (int)((tex.height * j / 4 - (int)ycenter) * zoom), (int)((tex.width / 4) * zoom) + 1, (int)((tex.height / 4) * zoom) + 1, io);
+                int x = (int)((tex.width * i - (int)xcenter) * zoom);
+                int y = (int)((tex.height * j - (int)ycenter) * zoom);
+                if (x + (tex.width * tex.scale) >= 0 && x < this.width && y + (tex.height * tex.scale) >= 0 && y < this.height)
+                    g2.drawImage(tex.scaledImage, x, y, io);
             }
         }
 
@@ -73,7 +75,7 @@ public class RenderEngine implements Runnable {
         Graphics2D g2 = (Graphics2D)bi.getGraphics();
         //g2.clearRect(0, 0, this.width, this.height);
 
-        int[] textures = {"Volcan".hashCode(), "Tree".hashCode(), "Grass".hashCode(),
+        int[] textures = {"Volcan".hashCode(), "Tree".hashCode(), "Default".hashCode(),
                             "Sky".hashCode(), "Cloud".hashCode(), "Water".hashCode()};
 
         // Création de la terre et de la roche
@@ -82,7 +84,7 @@ public class RenderEngine implements Runnable {
         for ( int i = 0 ; i < w.myWorld.length ; i++ ) {
             for ( int j = 0 ; j < w.myWorld[0].length ; j++ ) {
                 Texture tex = tm.get( textures[ w.myWorld[i][j] ] );
-                g2.drawImage(tex.image, tex.width * i, tex.height * j, tex.width, tex.height, io);
+                g2.drawImage(tex.scaledImage, tex.width * i, tex.height * j, tex.width, tex.height, io);
             }
         }
 

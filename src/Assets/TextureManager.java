@@ -3,7 +3,10 @@ package Assets;
 import Misc.Output;
 
 import javax.imageio.ImageIO;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.awt.image.BufferedImageOp;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
@@ -88,6 +91,17 @@ public class TextureManager {
         return null;*/
     }
 
+    public void updateTextures(double scale) {
+        // si la taille de la fenêtre change, alors on remet à jour les textures scaled
+        AffineTransform at = new AffineTransform();
+        at.scale(scale, scale);
+        AffineTransformOp scaleOp = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
+
+        // parcourir chaque texture pour la mettre à jour
+        for (Texture t: this.textures.values())
+            t.updateScaledImage(scaleOp, scale);
+    }
+
     public Texture get(int hashcode) {
         return this.textures.get(hashcode);
     }
@@ -96,11 +110,4 @@ public class TextureManager {
     public BufferedImage getImage(String name) {
         return getTexture(name).image;
     }
-
-    /*
-    // récupérer l'image selon index
-    public BufferedImage getImage(int id) {
-
-    }*/
-
 }
