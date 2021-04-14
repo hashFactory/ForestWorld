@@ -70,47 +70,6 @@ public class RenderEngine implements Runnable {
         return true;
     }
 
-    @Deprecated
-    public Image newImage(World w, TextureManager tm, BufferedImage bi, ImageObserver io) {
-        Graphics2D g2 = (Graphics2D)bi.getGraphics();
-        //g2.clearRect(0, 0, this.width, this.height);
-
-        int[] textures = {"Volcan".hashCode(), "Tree".hashCode(), "Default".hashCode(),
-                            "Sky".hashCode(), "Cloud".hashCode(), "Water".hashCode()};
-
-        // Création de la terre et de la roche
-        //Création de verdure (arbres,herbes)
-        /* Disperser les arbres au hasard grâce à un maths.random */
-        for ( int i = 0 ; i < w.myWorld.length ; i++ ) {
-            for ( int j = 0 ; j < w.myWorld[0].length ; j++ ) {
-                Texture tex = tm.get( textures[ w.myWorld[i][j] ] );
-                g2.drawImage(tex.scaledImage, tex.width * i, tex.height * j, tex.width, tex.height, io);
-            }
-        }
-
-        // Création d'un ciel bleu avec nuage (sans pluie)
-        /* La position du ciel et des nuages est fixe, l'image doit cependant changer durant la pluie */
-        /*for ( int i = 0 ; i < w.myWorld.length ; i++ ) {
-            for ( int j = 1 ; j < 3 ; j++ ) {
-                g2.drawImage(sky.image, sky.width * i, sky.height * j, sky.width, sky.height, io);
-            }
-            for ( int j = 0 ; j < 1 ; j++ ) {
-                g2.drawImage(cloud.image, cloud.width * i, cloud.height * j, cloud.width, cloud.height, io);
-            }
-        }*/
-
-        //Création de l'étang
-        /*for ( int i = 9; i < (w.myWorld.length/2) ; i++ ) {
-            for ( int j = 10 ; j < 14 ; j++ ) {
-                g2.drawImage(water.image, water.width * i, water.height * j, water.width, water.height, io);
-            }
-        }*/
-
-        Output.infoln("Time since last frame: " + (System.currentTimeMillis() - this.timeAtLastFrame) + "ms");
-        this.timeAtLastFrame = System.currentTimeMillis();
-        return bi;
-    }
-
     @Override
     public void run() {
         this.timeAtLastTick = System.currentTimeMillis();
