@@ -119,6 +119,10 @@ public class RenderEngine implements Runnable {
             //Output.debugln("Updated");
             this.width = this.en.getWidth();
             this.height = this.en.getHeight();
+
+            //this.xcenter = this.width / 2.0;
+            //this.ycenter = this.height / 2.0;
+
             en.repaint();
 
             long timeSinceLastFrame = System.currentTimeMillis() - this.timeAtLastTick;

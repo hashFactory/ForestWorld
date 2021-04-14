@@ -43,8 +43,9 @@ public class KeyboardHandler {
     {
         public void actionPerformed(ActionEvent e)
         {
+            //
             int character = e.getActionCommand().toCharArray()[0];
-            Output.debugln("+++++++ " + e.getActionCommand());
+            Output.debugln("pressed " + e.getActionCommand());
             KeyboardHandler.keyStroke[character] = true;
         }
     };
@@ -54,7 +55,7 @@ public class KeyboardHandler {
         public void actionPerformed(ActionEvent e)
         {
             int character = e.getActionCommand().toCharArray()[0];
-            Output.debugln("------ " + e.getActionCommand());
+            Output.debugln("released " + e.getActionCommand());
             KeyboardHandler.keyStroke[character] = false;
         }
     };
