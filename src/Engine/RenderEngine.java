@@ -51,14 +51,16 @@ public class RenderEngine implements Runnable {
         g2.setColor(Color.BLACK);
         g2.fillRect(0, 0, this.width, this.height);
 
+        // hardcode des valeurs pour l'instant
         int[] textures = {"Volcan".hashCode(), "Tree".hashCode(), "Grass".hashCode(),
             "Sky".hashCode(), "Cloud".hashCode(), "Water".hashCode()};
 
         for ( int i = 0 ; i < w.myWorld.length ; i++ ) {
             for ( int j = 0 ; j < w.myWorld[0].length ; j++ ) {
+                // récupérer la texture et l'afficher
                 Texture tex = tm.get( textures[ w.myWorld[i][j] ] );
-                int x = (int)((tex.width * i - (int)xcenter) * zoom);
-                int y = (int)((tex.height * j - (int)ycenter) * zoom);
+                int x = (int)((tex.width * i) * zoom) - (int)xcenter;
+                int y = (int)((tex.height * j) * zoom) - (int)ycenter;
                 if (x + (tex.width * tex.scale) >= 0 && x < this.width && y + (tex.height * tex.scale) >= 0 && y < this.height)
                     g2.drawImage(tex.scaledImage, x, y, io);
             }

@@ -31,7 +31,7 @@ public class Engine extends JPanel implements Runnable {
 
     private BufferedImage bi;
 
-    public Engine(int tps) {
+    public Engine(int tps, int wwidth, int wheight) {
         // précharger les textures pour le jeu
         try {
             tm = new TextureManager("res/images/");
@@ -43,8 +43,8 @@ public class Engine extends JPanel implements Runnable {
         }
 
         // init des structures
-        this.w = new World(40, 40);
-        this.re = new RenderEngine(600, 600, 70, this);
+        this.w = new World(100, 100);
+        this.re = new RenderEngine(wwidth, wheight, 60, this);
         this.bi = new BufferedImage(this.re.width, this.re.height, BufferedImage.TYPE_3BYTE_BGR);
 
         // temps par tick
@@ -74,7 +74,7 @@ public class Engine extends JPanel implements Runnable {
 
         // écrire des stats par dessus
         if (this.showStats) {
-            g.setColor(new Color(0, 0, 0, 50));
+            g.setColor(new Color(0, 0, 0, 150));
             g.fillRect(10, 10, 300, 30);
             g.setColor(Color.WHITE);
             g.drawString("Frame number: " + this.frameNumber + "\nTick number: " + this.tick, 10, 30);
@@ -87,13 +87,17 @@ public class Engine extends JPanel implements Runnable {
 
     public void interpret() {
         if (KeyboardHandler.keyStroke['w'])
-            this.re.ycenter -= 4 * (1.0 / this.re.zoom);
+            //if (this.re.ycenter > 0)
+                this.re.ycenter -= 4;//* (this.re.zoom);
         if (KeyboardHandler.keyStroke['s'])
-            this.re.ycenter += 4 * (1.0 / this.re.zoom);
+            //if (this.re.ycenter < this.re.height)
+                this.re.ycenter += 4;// * (this.re.zoom);
         if (KeyboardHandler.keyStroke['a'])
-            this.re.xcenter -= 4 * (1.0 / this.re.zoom);
+            //if (this.re.xcenter > 0)
+                this.re.xcenter -= 4;// * (this.re.zoom);
         if (KeyboardHandler.keyStroke['d'])
-            this.re.xcenter += 4 * (1.0 / this.re.zoom);
+            //if (this.re.xcenter < this.re.width)
+                this.re.xcenter += 4;// * (this.re.zoom);
         if (KeyboardHandler.keyStroke['q']) {
             this.re.zoom *= 0.98;
             this.tm.updateTextures(this.re.zoom);
@@ -114,6 +118,7 @@ public class Engine extends JPanel implements Runnable {
         }
         if (KeyboardHandler.keyStroke['r']) {
             this.w.generateWorld();
+            KeyboardHandler.keyStroke['r'] = false;
         }
     }
 

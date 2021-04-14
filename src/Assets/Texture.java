@@ -39,7 +39,7 @@ public class Texture {
     public void updateScaledImage(AffineTransformOp op, double scale) {
         // effectue la transformation
         this.scale = scale;
-        this.scaledImage = new BufferedImage((int)(this.width * scale) + 2, (int)(this.height * scale) + 2, BufferedImage.TYPE_INT_ARGB);
+        this.scaledImage = new BufferedImage((int)(this.width * scale) + 1, (int)(this.height * scale) + 1, BufferedImage.TYPE_INT_RGB);
         this.scaledImage = op.filter(this.image, this.scaledImage);
     }
 }

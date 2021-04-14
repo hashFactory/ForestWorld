@@ -6,10 +6,13 @@ public class ForestWorld {
     private JFrame frame;
     private Engine en;
 
+    private int wwidth = 600;
+    private int wheight = 600;
+
     public ForestWorld() {
         frame = new JFrame("World of Sprite");
 
-        this.en = new Engine(20);
+        this.en = new Engine(20, wwidth, wheight);
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(600,600); //agrandi la fenêtre d'affichage
